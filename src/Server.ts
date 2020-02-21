@@ -5,6 +5,7 @@ import * as compress from "compression";
 import * as cookieParser from "cookie-parser";
 import * as methodOverride from "method-override";
 import * as dotENV from "dotenv";
+import * as cors from "cors";
 
 const rootDir = __dirname;
 
@@ -33,6 +34,7 @@ export class Server extends ServerLoader {
      */
     public $beforeRoutesInit(): void | Promise<any> {
         this
+            .use(cors())
             .use(GlobalAcceptMimesMiddleware)
             .use(cookieParser())
             .use(compress({}))
@@ -42,4 +44,5 @@ export class Server extends ServerLoader {
                 extended: true
             }));
     }
+
 }
