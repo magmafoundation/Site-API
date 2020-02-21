@@ -25,7 +25,7 @@ export class HomeController {
         let releaseName;
 
         console.log(version);
-        if (version == "1.12") {
+        if (version == "1.12.2") {
             releaseName = name;
         } else if (version == "1.14.4") {
             releaseName = name + "-" + version
@@ -44,7 +44,7 @@ export class HomeController {
         let releaseName;
 
         console.log(version);
-        if (version == "1.12") {
+        if (version == "1.12.2") {
             releaseName = name;
         } else if (version == "1.14.4") {
             releaseName = name + "-" + version
@@ -66,7 +66,7 @@ export class HomeController {
         let releaseName;
 
         console.log(version);
-        if (version == "1.12") {
+        if (version == "1.12.2") {
             releaseName = name;
         } else if (version == "1.14.4") {
             releaseName = name + "-" + version
@@ -77,6 +77,29 @@ export class HomeController {
         res.redirect(301, release.browser_download_url);
     }
 
+
+    @Summary("Download Specified Dev version")
+    @Get("/api/resources/:name/:version/dev/:tag/download")
+    private async getDevTagDownload(@PathParams("name") name: string,
+                                    @PathParams("version") version: string,
+                                    @PathParams("tag") tag: string, @Res() res: any): Promise<any> {
+
+        let releaseName;
+
+        console.log(version);
+        if (version == "1.12.2") {
+            releaseName = name;
+        } else if (version == "1.14.4") {
+            releaseName = name + "-" + version
+        }
+
+        let releases = await this.versionService.fetchDev(releaseName);
+
+        let download = releases.find(value => value.tag_name == tag).assets.find(value => value.name.includes("server"));
+        res.redirect(301, download.browser_download_url);
+    }
+
+
     @Summary("List of Stable Versions")
     @Get("/api/resources/:name/:version/stable/")
     private async getStable(@PathParams("name") name: string,
@@ -84,7 +107,7 @@ export class HomeController {
         let releaseName;
 
         console.log(version);
-        if (version == "1.12") {
+        if (version == "1.12.2") {
             releaseName = name;
         } else if (version == "1.14.4") {
             releaseName = name + "-" + version
@@ -102,7 +125,7 @@ export class HomeController {
         let releaseName;
 
         console.log(version);
-        if (version == "1.12") {
+        if (version == "1.12.2") {
             releaseName = name;
         } else if (version == "1.14.4") {
             releaseName = name + "-" + version
@@ -123,7 +146,7 @@ export class HomeController {
         let releaseName;
 
         console.log(version);
-        if (version == "1.12") {
+        if (version == "1.12.2") {
             releaseName = name;
         } else if (version == "1.14.4") {
             releaseName = name + "-" + version
@@ -133,5 +156,26 @@ export class HomeController {
 
         res.redirect(301, release.browser_download_url);
     }
+    @Summary("Download Specified Stable version")
+    @Get("/api/resources/:name/:version/dev/:tag/download")
+    private async getStableTagDownload(@PathParams("name") name: string,
+                                    @PathParams("version") version: string,
+                                    @PathParams("tag") tag: string, @Res() res: any): Promise<any> {
+
+        let releaseName;
+
+        console.log(version);
+        if (version == "1.12.2") {
+            releaseName = name;
+        } else if (version == "1.14.4") {
+            releaseName = name + "-" + version
+        }
+
+        let releases = await this.versionService.fetchStable(releaseName);
+
+        let download = releases.find(value => value.tag_name == tag).assets.find(value => value.name.includes("server"));
+        res.redirect(301, download.browser_download_url);
+    }
+
 
 }

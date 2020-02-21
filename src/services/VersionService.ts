@@ -57,10 +57,10 @@ export class VersionService {
     });
   }
 
-  async fetchStable(name: string): Promise<Release> {
+  async fetchStable(name: string): Promise<Release[]> {
     let response = await this.myAxios.get(`https://api.github.com/repos/magmafoundation/${name}/releases/latest`);
 
-    let result: Release = response.data as Release;
+    let result: Release[] = response.data as Release[];
 
     return result;
   }
