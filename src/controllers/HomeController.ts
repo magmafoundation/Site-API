@@ -12,7 +12,7 @@ export class HomeController {
     }
 
     @Get("/")
-    @Redirect(301, "https://magmafoundation.org")
+    @Redirect(301, "https://api.magmafoundation.org/api-docs")
     @Hidden()
     private index() {
     }

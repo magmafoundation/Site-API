@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  magma-api-svc
+  namespace: magma-api
+spec:
+  selector:
+    app:  magma-api
+  type:  LoadBalancer
+  ports:
+  - name:  http
+    port:  8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name:  redis
+  namespace: magma-api
+spec:
+  selector:
+    app:  redis
+  type:  ClusterIP
+  ports:
+  - name:  redis
+    port:  6379
+    targetPort: 6379
