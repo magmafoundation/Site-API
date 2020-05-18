@@ -9,10 +9,5 @@ pipeline {
               }
           }
       }
-      stage('Deploy') {
-          steps {
-              sh "kubectl set image deployment magma-api magma-api=hexeption/magma-api:$BUILD_NUMBER --namespace magma-api"
-          }
-      }
   }
  }
