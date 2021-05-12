@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@tsed/common": "^5.43.1",
-    "@tsed/core": "^5.43.1",
+    "@tsed/core": "^5.65.7",
     "@tsed/di": "^5.43.1",
     "@tsed/swagger": "^5.43.1",
     "@types/swagger-schema-official": "^2.0.20",
