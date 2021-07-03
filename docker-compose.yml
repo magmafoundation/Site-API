@@ -1,0 +1,17 @@
+version: "2"
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+    - 127.0.0.1:6379:6379
+  api:
+    image: api
+    links:
+      - redis
+    env_file:
+      - .env
+    environment:
+      REDIS_HOST: redis:6379
+    ports:
+    - 3000:3000

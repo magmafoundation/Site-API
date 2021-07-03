@@ -2,12 +2,18 @@ package utils
 
 import (
 	"context"
+	json2 "encoding/json"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/go-github/v36/github"
 	"golang.org/x/oauth2"
+	"os"
+	"time"
 )
 
 type VersionUtils struct {
 	Client *github.Client
+	RDB    *redis.Client
 }
 
 func (util *VersionUtils) Setup(token string) {
@@ -18,48 +24,77 @@ func (util *VersionUtils) Setup(token string) {
 	tc := oauth2.NewClient(c, ts)
 
 	util.Client = github.NewClient(tc)
+
+	util.RDB = redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_HOST"),
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
 }
 
 // GetStableReleases Fetch a list of all stable releases.
 func (util *VersionUtils) GetStableReleases(repo string) []*github.RepositoryRelease {
 
-	// Fetch the data.
-	releases, _, err := util.Client.Repositories.ListReleases(context.TODO(), "magmafoundation", repo, &github.ListOptions{})
-	if err != nil {
-		panic(err.Error())
-	}
-	var stableReleases []*github.RepositoryRelease
+	val, err := util.RDB.Get(context.Background(), "releases:stable").Result()
 
-	// Filter out all pre-releases
-	for _, release := range releases {
-		if !*release.Prerelease {
-			stableReleases = append(stableReleases, release)
+	if err == redis.Nil {
+		fmt.Println("Fetching Stable releases.")
+
+		// Fetch the data.
+		releases, _, err := util.Client.Repositories.ListReleases(context.TODO(), "magmafoundation", repo, &github.ListOptions{})
+		if err != nil {
+			panic(err.Error())
 		}
+		var stableReleases []*github.RepositoryRelease
+
+		// Filter out all pre-releases
+		for _, release := range releases {
+			if !*release.Prerelease {
+				stableReleases = append(stableReleases, release)
+			}
+		}
+
+		json, _ := json2.Marshal(releases)
+		util.RDB.Set(context.Background(), "releases:stable", json, 5*time.Minute)
+
+		return releases
 	}
 
-	// Return the stable releases
-	return stableReleases
+	var releases []*github.RepositoryRelease
 
+	json2.Unmarshal([]byte(val), &releases)
+	return releases
 }
 
 // GetPreReleases Fetch a list of all pre-releases.
 func (util *VersionUtils) GetPreReleases(repo string) []*github.RepositoryRelease {
-	// Fetch the data.
-	releases, _, err := util.Client.Repositories.ListReleases(context.TODO(), "magmafoundation", repo, &github.ListOptions{})
-	if err != nil {
-		panic(err.Error())
+
+
+	val, err := util.RDB.Get(context.Background(), "releases:pre").Result()
+
+	if err == redis.Nil {
+		fmt.Println("Fetching dev releases.")
+		// Fetch the data.
+		releases, _, err := util.Client.Repositories.ListReleases(context.TODO(), "magmafoundation", repo, &github.ListOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
+		var preReleases []*github.RepositoryRelease
+
+		// Filter out all pre-releases
+		for _, release := range releases {
+			if *release.Prerelease {
+				preReleases = append(preReleases, release)
+			}
+		}
+		json, _ := json2.Marshal(preReleases)
+		util.RDB.Set(context.Background(), "releases:pre", json, 5*time.Minute)
+		// Return the stable releases
+		return preReleases
 	}
 	var preReleases []*github.RepositoryRelease
 
-	// Filter out all pre-releases
-	for _, release := range releases {
-		if *release.Prerelease {
-			preReleases = append(preReleases, release)
-		}
-	}
+	json2.Unmarshal([]byte(val), &preReleases)
 
-	// Return the stable releases
 	return preReleases
 }
-
-
