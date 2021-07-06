@@ -2,9 +2,11 @@ package app
 
 import (
 	"MagmaAPI/utils"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"os"
 	"strings"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func getRepoFromVersion(version string) string {
@@ -24,6 +26,10 @@ func getRepoFromVersion(version string) string {
 
 func Start() {
 	app := fiber.New()
+
+	app.Use(cors.New())
+
+
 	util := utils.VersionUtils{}
 	util.Setup(os.Getenv("GH_TOKEN"))
 
@@ -91,7 +97,6 @@ func Start() {
 			"error": "No release found",
 		})
 
-
 	})
-	panic(app.Listen(":3000"))
+	panic(app.Listen(":" + os.Getenv("APP_PORT")))
 }

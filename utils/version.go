@@ -4,11 +4,12 @@ import (
 	"context"
 	json2 "encoding/json"
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/google/go-github/v36/github"
 	"golang.org/x/oauth2"
-	"os"
-	"time"
 )
 
 type VersionUtils struct {
@@ -34,8 +35,9 @@ func (util *VersionUtils) Setup(token string) {
 
 // GetStableReleases Fetch a list of all stable releases.
 func (util *VersionUtils) GetStableReleases(repo string) []*github.RepositoryRelease {
+	fmt.Printf("Fetching versions for %s\n", repo)
 
-	val, err := util.RDB.Get(context.Background(), "releases:stable").Result()
+	val, err := util.RDB.Get(context.Background(), "releases:stable:"+repo).Result()
 
 	if err == redis.Nil {
 		fmt.Println("Fetching Stable releases.")
@@ -50,14 +52,17 @@ func (util *VersionUtils) GetStableReleases(repo string) []*github.RepositoryRel
 		// Filter out all pre-releases
 		for _, release := range releases {
 			if !*release.Prerelease {
+
 				stableReleases = append(stableReleases, release)
 			}
 		}
-
+		if stableReleases == nil {
+			stableReleases = []*github.RepositoryRelease{}
+		}
 		json, _ := json2.Marshal(releases)
-		util.RDB.Set(context.Background(), "releases:stable", json, 5*time.Minute)
+		util.RDB.Set(context.Background(), "releases:stable:"+repo, json, 5*time.Minute)
 
-		return releases
+		return stableReleases
 	}
 
 	var releases []*github.RepositoryRelease
@@ -69,8 +74,7 @@ func (util *VersionUtils) GetStableReleases(repo string) []*github.RepositoryRel
 // GetPreReleases Fetch a list of all pre-releases.
 func (util *VersionUtils) GetPreReleases(repo string) []*github.RepositoryRelease {
 
-
-	val, err := util.RDB.Get(context.Background(), "releases:pre").Result()
+	val, err := util.RDB.Get(context.Background(), "releases:pre:"+repo).Result()
 
 	if err == redis.Nil {
 		fmt.Println("Fetching dev releases.")
@@ -88,7 +92,7 @@ func (util *VersionUtils) GetPreReleases(repo string) []*github.RepositoryReleas
 			}
 		}
 		json, _ := json2.Marshal(preReleases)
-		util.RDB.Set(context.Background(), "releases:pre", json, 5*time.Minute)
+		util.RDB.Set(context.Background(), "releases:pre:"+repo, json, 5*time.Minute)
 		// Return the stable releases
 		return preReleases
 	}
@@ -96,5 +100,9 @@ func (util *VersionUtils) GetPreReleases(repo string) []*github.RepositoryReleas
 
 	json2.Unmarshal([]byte(val), &preReleases)
 
-	return preReleases
+	if preReleases != nil {
+		return preReleases
+	}
+	return []*github.RepositoryRelease{}
+
 }
