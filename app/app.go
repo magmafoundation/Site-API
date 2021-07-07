@@ -1,7 +1,10 @@
 package app
 
 import (
+	mgithub "MagmaAPI/github"
+	mredis "MagmaAPI/redis"
 	"MagmaAPI/utils"
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"os"
 	"strings"
@@ -25,13 +28,18 @@ func getRepoFromVersion(version string) string {
 }
 
 func Start() {
+	mredis.RDB = redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_HOST"),
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
 	app := fiber.New()
 
 	app.Use(cors.New())
 
-
 	util := utils.VersionUtils{}
-	util.Setup(os.Getenv("GH_TOKEN"))
+	mgithub.Setup(os.Getenv("GH_TOKEN"))
 
 	app.Get("/api/resources/:name/:version/dev", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(util.GetPreReleases(getRepoFromVersion(ctx.Params("version"))))
@@ -98,5 +106,12 @@ func Start() {
 		})
 
 	})
+
+	app.Get("/api/stats", func(ctx *fiber.Ctx) error {
+
+		return ctx.JSON(utils.GetStats())
+
+	})
+
 	panic(app.Listen(":" + os.Getenv("APP_PORT")))
 }
