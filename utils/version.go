@@ -5,7 +5,7 @@ import (
 	mredis "MagmaAPI/redis"
 	"context"
 	json2 "encoding/json"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -15,16 +15,14 @@ import (
 type VersionUtils struct {
 }
 
-
-
 // GetStableReleases Fetch a list of all stable releases.
 func (util *VersionUtils) GetStableReleases(repo string) []*github.RepositoryRelease {
-	fmt.Printf("Fetching versions for %s\n", repo)
+	log.Printf("Fetching versions for %s\n", repo)
 
 	val, err := mredis.RDB.Get(context.Background(), "releases:stable:"+repo).Result()
 
 	if err == redis.Nil {
-		fmt.Println("Fetching Stable releases.")
+		log.Println("Fetching Stable releases.")
 
 		// Fetch the data.
 		releases, _, err := mgithub.Client.Repositories.ListReleases(context.TODO(), "magmafoundation", repo, &github.ListOptions{})
@@ -61,7 +59,7 @@ func (util *VersionUtils) GetPreReleases(repo string) []*github.RepositoryReleas
 	val, err := mredis.RDB.Get(context.Background(), "releases:pre:"+repo).Result()
 
 	if err == redis.Nil {
-		fmt.Println("Fetching dev releases.")
+		log.Println("Fetching dev releases.")
 		// Fetch the data.
 		releases, _, err := mgithub.Client.Repositories.ListReleases(context.TODO(), "magmafoundation", repo, &github.ListOptions{})
 		if err != nil {
