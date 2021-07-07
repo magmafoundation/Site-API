@@ -4,12 +4,16 @@ import (
 	mgithub "MagmaAPI/github"
 	mredis "MagmaAPI/redis"
 	"MagmaAPI/utils"
+	"context"
+	json2 "encoding/json"
 	"github.com/go-redis/redis/v8"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/mileusna/crontab"
+	"log"
 	"os"
 	"strings"
-
-	"github.com/gofiber/fiber/v2"
+	"time"
 )
 
 func getRepoFromVersion(version string) string {
@@ -25,6 +29,13 @@ func getRepoFromVersion(version string) string {
 		return "Magma"
 	}
 
+}
+
+func FetchAndCacheStats()  {
+	log.Println("Fetching stats...")
+	stats := utils.GetStats()
+	json, _ := json2.Marshal(stats)
+	mredis.RDB.Set(context.Background(), "stats", json, 5*time.Minute)
 }
 
 func Start() {
@@ -108,10 +119,27 @@ func Start() {
 	})
 
 	app.Get("/api/stats", func(ctx *fiber.Ctx) error {
+		val, err := mredis.RDB.Get(context.Background(), "stats").Result()
+		var stats utils.Stats
 
-		return ctx.JSON(utils.GetStats())
+		if err == redis.Nil {
+			stats = utils.GetStats()
+			json, _ := json2.Marshal(stats)
+			mredis.RDB.Set(context.Background(), "stats", json, 5*time.Minute)
+			return ctx.JSON(stats)
+		}
+
+		_ = json2.Unmarshal([]byte(val), &stats)
+		return ctx.JSON(stats)
 
 	})
+
+	FetchAndCacheStats()
+
+	ctab := crontab.New() // create cron table
+
+	// Fetch stats every 5 min
+	ctab.MustAddJob("*/5 * * * *", FetchAndCacheStats)
 
 	panic(app.Listen(":" + os.Getenv("APP_PORT")))
 }
