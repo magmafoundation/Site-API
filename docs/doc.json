@@ -15,15 +15,15 @@
   ],
   "tags": [
     {
-      "name": "HomeController"
+      "name": "Versions"
     }
   ],
   "paths": {
     "/api/resources/{name}/{version}/dev": {
       "get": {
-        "operationId": "HomeController.getDev",
+        "operationId": "Versions.getDev",
         "tags": [
-          "HomeController"
+          "Versions"
         ],
         "parameters": [
           {
@@ -49,9 +49,9 @@
     },
     "/api/resources/{name}/{version}/dev/latest": {
       "get": {
-        "operationId": "HomeController.getLatestDev",
+        "operationId": "Versions.getLatestDev",
         "tags": [
-          "HomeController"
+          "Versions"
         ],
         "parameters": [
           {
@@ -77,9 +77,9 @@
     },
     "/api/resources/{name}/{version}/dev/latest/download": {
       "get": {
-        "operationId": "HomeController.getLatestDevDownload",
+        "operationId": "Versions.getLatestDevDownload",
         "tags": [
-          "HomeController"
+          "Versions"
         ],
         "parameters": [
           {
@@ -108,9 +108,9 @@
     },
     "/api/resources/{name}/{version}/dev/{tag}/download": {
       "get": {
-        "operationId": "HomeController.getStableTagDownload",
+        "operationId": "Versions.getStableTagDownload",
         "tags": [
-          "HomeController"
+          "Versions"
         ],
         "parameters": [
           {
@@ -142,9 +142,9 @@
     },
     "/api/resources/{name}/{version}/stable": {
       "get": {
-        "operationId": "HomeController.getStable",
+        "operationId": "Versions.getStable",
         "tags": [
-          "HomeController"
+          "Versions"
         ],
         "parameters": [
           {
@@ -170,9 +170,9 @@
     },
     "/api/resources/{name}/{version}/stable/latest": {
       "get": {
-        "operationId": "HomeController.getLatestStable",
+        "operationId": "Versions.getLatestStable",
         "tags": [
-          "HomeController"
+          "Versions"
         ],
         "parameters": [
           {
@@ -198,9 +198,9 @@
     },
     "/api/resources/{name}/{version}/stable/latest/download": {
       "get": {
-        "operationId": "HomeController.getLatestStableDownload",
+        "operationId": "Versions.getLatestStableDownload",
         "tags": [
-          "HomeController"
+          "Versions"
         ],
         "parameters": [
           {

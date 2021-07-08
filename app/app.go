@@ -149,6 +149,9 @@ func Start() {
 	}))
 
 
+	app.Get("/api-docs", func(ctx *fiber.Ctx) error {
+		return ctx.Redirect("/api-docs/index.html")
+	})
 
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return ctx.Redirect("/api-docs/index.html")
