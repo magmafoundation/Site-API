@@ -1,5 +1,6 @@
 FROM golang:alpine AS build
-
+USER root
+RUN RUN apk add build-base
 WORKDIR /src
 COPY . /src
 RUN go build
