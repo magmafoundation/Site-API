@@ -41,7 +41,7 @@ func (util *VersionUtils) GetStableReleases(repo string) []*github.RepositoryRel
 		if stableReleases == nil {
 			stableReleases = []*github.RepositoryRelease{}
 		}
-		json, _ := json2.Marshal(releases)
+		json, _ := json2.Marshal(stableReleases)
 		mredis.RDB.Set(context.Background(), "releases:stable:"+repo, json, 5*time.Minute)
 
 		return stableReleases
@@ -50,6 +50,7 @@ func (util *VersionUtils) GetStableReleases(repo string) []*github.RepositoryRel
 	var releases []*github.RepositoryRelease
 
 	json2.Unmarshal([]byte(val), &releases)
+
 	return releases
 }
 
