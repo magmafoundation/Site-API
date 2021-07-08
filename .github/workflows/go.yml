@@ -40,3 +40,18 @@ jobs:
         with:
           push: true
           tags: docker.pkg.github.com/${{ env.IMAGE_REPOSITORY }}/siteapi:${{ env.SHORT_SHA }}
+
+      - uses: actions/checkout@master
+      - name: deploy to cluster
+        uses: ghostzero/kubectl@v1
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: set image --record deployment/magma-api container=magmafoundation:docker.pkg.github.com/${{ env.IMAGE_REPOSITORY }}/siteapi:${{ env.SHORT_SHA }} -n magmafoundation
+      - name: verify deployment
+        uses: ghostzero/kubectl@v1
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+          KUBECTL_VERSION: "1.15"
+        with:
+          args: '"rollout status deployment/magma-api -n magmafoundation"'
