@@ -1,0 +1,245 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Api documentation",
+    "description": "",
+    "termsOfService": ""
+  },
+  "securityDefinitions": {},
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "HomeController"
+    }
+  ],
+  "paths": {
+    "/api/resources/{name}/{version}/dev": {
+      "get": {
+        "operationId": "HomeController.getDev",
+        "tags": [
+          "HomeController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "List of Dev Versions"
+      }
+    },
+    "/api/resources/{name}/{version}/dev/latest": {
+      "get": {
+        "operationId": "HomeController.getLatestDev",
+        "tags": [
+          "HomeController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Latest Dev Version"
+      }
+    },
+    "/api/resources/{name}/{version}/dev/latest/download": {
+      "get": {
+        "operationId": "HomeController.getLatestDevDownload",
+        "tags": [
+          "HomeController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "301": {
+            "description": "Download url of latest jar"
+          }
+        },
+        "summary": "Latest Dev Version"
+      }
+    },
+    "/api/resources/{name}/{version}/dev/{tag}/download": {
+      "get": {
+        "operationId": "HomeController.getStableTagDownload",
+        "tags": [
+          "HomeController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "tag",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Download Specified Stable version"
+      }
+    },
+    "/api/resources/{name}/{version}/stable": {
+      "get": {
+        "operationId": "HomeController.getStable",
+        "tags": [
+          "HomeController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "List of Stable Versions"
+      }
+    },
+    "/api/resources/{name}/{version}/stable/latest": {
+      "get": {
+        "operationId": "HomeController.getLatestStable",
+        "tags": [
+          "HomeController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Latest Stable Version"
+      }
+    },
+    "/api/resources/{name}/{version}/stable/latest/download": {
+      "get": {
+        "operationId": "HomeController.getLatestStableDownload",
+        "tags": [
+          "HomeController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "301": {
+            "description": "Download url of latest jar"
+          }
+        },
+        "summary": "Download Latest Stable Version"
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "tags": [
+          "Stats"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Get stats about magma"
+      }
+    }
+  },
+  "definitions": {}
+}

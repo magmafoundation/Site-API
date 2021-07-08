@@ -15,6 +15,9 @@ import (
 	"strings"
 	"time"
 )
+import swagger "github.com/arsmn/fiber-swagger/v2"
+
+
 
 func getRepoFromVersion(version string) string {
 
@@ -38,6 +41,7 @@ func FetchAndCacheStats()  {
 	mredis.RDB.Set(context.Background(), "stats", json, 5*time.Minute)
 }
 
+
 func Start() {
 	mredis.RDB = redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_HOST"),
@@ -51,6 +55,7 @@ func Start() {
 
 	util := utils.VersionUtils{}
 	mgithub.Setup(os.Getenv("GH_TOKEN"))
+
 
 	app.Get("/api/resources/:name/:version/dev", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(util.GetPreReleases(getRepoFromVersion(ctx.Params("version"))))
@@ -133,6 +138,22 @@ func Start() {
 		return ctx.JSON(stats)
 
 	})
+	app.Static("/docs", "./docs", fiber.Static{
+		Compress: false,
+		CacheDuration: time.Duration(-1),
+	})
+
+	app.Get("/api-docs/*", swagger.New(swagger.Config{ // custom
+		URL: "/docs/doc.json",
+		DeepLinking: false,
+	}))
+
+
+
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		return ctx.Redirect("/api-docs/index.html")
+	})
+
 
 	FetchAndCacheStats()
 
