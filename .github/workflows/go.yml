@@ -47,7 +47,7 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: set image --record deployment/magma-api container=magmafoundation:docker.pkg.github.com/${{ env.IMAGE_REPOSITORY }}/siteapi:${{ env.SHORT_SHA }} -n magmafoundation
+          args: set image --record deployment/magma-api magmafoundation=docker.pkg.github.com/${{ env.IMAGE_REPOSITORY }}/siteapi:${{ env.SHORT_SHA }} -n magmafoundation
       - name: verify deployment
         uses: ghostzero/kubectl@v1
         env:
